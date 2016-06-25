@@ -1,0 +1,76 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block usertools %}
+<div id="user-tools">
+    {% block welcome-msg %}
+        {% trans 'Welcome,' %}
+        <strong>{% firstof user.get_short_name user.get_username %}</strong>.
+    {% endblock %}
+    {% block userlinks %}
+        {% if site_url %}
+            <a href="{{ site_url }}">{% trans 'View site' %}</a> /
+        {% endif %}
+        {% if user.is_active and user.is_staff %}
+            {% url 'django-admindocs-docroot' as docsroot %}
+            {% if docsroot %}
+                <a href="{{ docsroot }}">{% trans 'Documentation' %}</a> /
+            {% endif %}
+        {% endif %}
+        {% if user.has_usable_password %}
+        <a href="{% url 'admin:password_change' %}">{% trans 'Change password' %}</a> /
+        {% endif %}
+        <a href="{% url 'admin:logout' %}">{% trans 'Log out' %}</a>
+    {% endblock %}
+</div>
+{% endblock %}
+
+{% block content %}
+    <form action="" method="get">
+        {{ filter.form.as_p }}
+        <input type="submit" />
+    </form>
+
+    <div class="results">
+    <table id="result_list">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Resume</th>
+        <th>Work Exp</th>
+        <th>Analytics Exp</th>
+        <th>Skills</th>
+        <th>Preferred Location</th>
+        <th>CTC</th>
+        <th>Current Employer</th>
+        <th>UG Institute</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for c in filter %}
+    {% if c.form.non_field_errors %}
+        <tr><td colspan="{{ result|length }}">{{ c.form.non_field_errors }}</td></tr>
+    {% endif %}
+    <tr class="{% cycle 'row1' 'row2' %}">
+        <td>{{ c.name }}</td>
+        <td>{{ c.with_resume }}</td>
+        <td>{{ c.work_exp }}</td>
+        <td>{{ c.analytics_exp }}</td>
+        <td>{{ c.skills }}</td>
+        <td>{{ c.preferred_location }}</td>
+        <td>{{ c.ctc }}</td>
+        <td>{{ c.current_employer }}</td>
+        <td>{{ c.ug_institute }}</td>
+        <br>
+    </tr>
+    {% empty %}
+        <tr><td>Try with different filter combinations</td></tr>
+    {% endfor %}
+    </tbody>
+    </table>
+    </div>
+
+    <div>
+        <a href="recruit/candidate/csv/?{{ request.GET.urlencode }}">Download csv</a>
+    </div>
+{% endblock %}
