@@ -1,4 +1,4 @@
-from datetime import datetime
+from django.utils import timezone
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
@@ -61,7 +61,7 @@ class UserProfile(models.Model):
     and to limit it, we use following fields
     """
     user = models.OneToOneField(User)
-    last_profile_download = models.DateTimeField(default=datetime.now)
+    last_profile_download = models.DateTimeField(default=timezone.now)
     daily_download_count = models.IntegerField(default=0)
     daily_download_limit = models.IntegerField(default=settings.DAILY_DOWNLOAD_LIMIT)
 
